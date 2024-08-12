@@ -35,19 +35,15 @@ jobs:
           echo "ISSUE_REPO_OWNER=rancher" >> $GITHUB_ENV
           echo "ISSUE_REPO_NAME=rancher" >> $GITHUB_ENV
 
-          # Fetch the latest release from the upstream repository
           latest_upstream_release=$(curl -s https://api.github.com/repos/kubernetes/ingress-nginx/releases | jq -r '[.[] | select(.tag_name | startswith("controller"))][0].tag_name')
 
-          # Fetch the latest release from the forked repository
           latest_forked_release=$(curl -s https://api.github.com/repos/rancher/ingress-nginx/releases | jq -r '[.[] | select(.tag_name)][0].tag_name')
 
-          # Validate that the releases were fetched successfully
           if [ -z "$latest_upstream_release" ] || [ -z "$latest_forked_release" ]; then
             echo "Error: Could not fetch the release information."
             exit 1
           fi
 
-          # Extract only the version from the release tag
           latest_upstream_version=$(echo $latest_upstream_release | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
           latest_forked_version=$(echo $latest_forked_release | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
 
@@ -63,6 +59,8 @@ jobs:
           else
             new_release="false"
           fi
+
+          echo $new_release 
 
 
       - name: Create issue
