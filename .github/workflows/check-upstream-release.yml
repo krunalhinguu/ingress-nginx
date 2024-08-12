@@ -36,23 +36,34 @@ jobs:
           echo "ISSUE_REPO_NAME=rancher" >> $GITHUB_ENV
 
           # Fetch the latest release from the upstream repository
-          latest_upstream_release=$(curl -s https://api.github.com/repos/$UPSTREAM_REPO_OWNER/$UPSTREAM_REPO_NAME/releases | jq -r '[.[] | select(.tag_name | startswith("controller"))] | .[0].tag_name')
+          latest_upstream_release=$(curl -s https://api.github.com/repos/$UPSTREAM_REPO_OWNER/$UPSTREAM_REPO_NAME/releases | jq -r '[.[] | select(.tag_name | startswith("controller"))][0].tag_name')
 
           # Fetch the latest release from the forked repository
-          latest_forked_release=$(curl -s https://api.github.com/repos/$FORKED_REPO_OWNER/$FORKED_REPO_NAME/releases | jq -r '[.[] | select(.tag_name)] | .[0].tag_name')
+          latest_forked_release=$(curl -s https://api.github.com/repos/$FORKED_REPO_OWNER/$FORKED_REPO_NAME/releases | jq -r '[.[] | select(.tag_name)][0].tag_name')
 
-          # Fetch the only version from the release tag
+          # Validate that the releases were fetched successfully
+          if [ -z "$latest_upstream_release" ] || [ -z "$latest_forked_release" ]; then
+            echo "Error: Could not fetch the release information."
+            exit 1
+          fi
+
+          # Extract only the version from the release tag
           latest_upstream_version=$(echo $latest_upstream_release | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
           latest_forked_version=$(echo $latest_forked_release | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
- 
-          echo "latest_upstream_version=$latest_upstream_version" >> $GITHUB_ENV
-          echo "latest_forked_version=$latest_forked_version" >> $GITHUB_ENV
 
-          if [ "$(printf '%s\n' "$latest_forked_version" "$latest_upstream_version" | sort -V | head -n1)" != "$latest_upstream_version" ]; then
-            echo "new_release=true" >> $GITHUB_ENV
-          else
-            echo "new_release=false" >> $GITHUB_ENV
+          if [ -z "$latest_upstream_version" ] || [ -z "$latest_forked_version" ]; then
+            echo "Error: Could not extract version numbers."
+            exit 1
           fi
+
+          # Compare the versions
+          if [ "$(printf '%s\n' "$latest_forked_version" "$latest_upstream_version" | sort -V | head -n1)" != "$latest_upstream_version" ]; then
+            new_release="true"
+            echo "latest_upstream_release=$latest_upstream_release" >> $GITHUB_ENV
+          else
+            new_release="false"
+          fi
+
 
       - name: Create issue
         if: env.new_release == 'true'
