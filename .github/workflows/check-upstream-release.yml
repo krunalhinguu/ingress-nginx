@@ -67,9 +67,11 @@ jobs:
           echo $new_release 
 
       - name: Authenticate GitHub CLI
-        run: echo "$GH_TOKEN" | gh auth login --with-token
+        run: |
+          echo "$GH_TOKEN" | gh auth login --with-token
+          unset GH_TOKEN  # Unset GH_TOKEN after login to avoid storing credentials
         env:
-          GH_TOKEN: ${{ github.token }} # Correctly set GH_TOKEN
+          GH_TOKEN: ${{ github.token }}
 
       - name: Create issue
         if: env.new_release == 'true'
