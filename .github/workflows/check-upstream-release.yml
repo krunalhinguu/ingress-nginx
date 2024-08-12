@@ -2,7 +2,8 @@ name: Check Upstream Release and Create Issue
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs daily at midnight
+    # - cron: '0 0 * * *' # Runs daily at midnight
+    - cron: '* * * * *' # Runs daily at midnight
   workflow_dispatch:
 
 jobs:
