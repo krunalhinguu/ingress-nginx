@@ -58,9 +58,10 @@ jobs:
           # Compare the versions
           if [ "$(printf '%s\n' "$latest_forked_version" "$latest_upstream_version" | sort -V | head -n1)" != "$latest_upstream_version" ]; then
             new_release="true"
+            echo "new_release=true" >> $GITHUB_ENV
             echo "latest_upstream_release=$latest_upstream_release" >> $GITHUB_ENV
           else
-            new_release="false"
+            echo "new_release=false" >> $GITHUB_ENV
           fi
 
           echo $new_release 
