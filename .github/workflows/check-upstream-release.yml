@@ -1,6 +1,9 @@
 name: Check Upstream Release and Create Issue
 
 on:
+  push:
+    branches:
+      - automation-workflow # Runs on every commit to the automation-workflow branch
   schedule:
     # - cron: '0 0 * * *' # Runs daily at midnight
     - cron: '* * * * *' # Runs daily at midnight
