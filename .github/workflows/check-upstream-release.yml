@@ -1,0 +1,79 @@
+name: Check Upstream Release and Create Issue
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight
+  workflow_dispatch:
+
+jobs:
+  check-release:
+    runs-on: ubuntu-latest
+    # if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install @octokit/rest jq
+
+      - name: Check for new release
+        id: check_release
+        run: |
+          echo "UPSTREAM_REPO_OWNER=kubernetes" >> $GITHUB_ENV
+          echo "UPSTREAM_REPO_NAME=ingress-nginx" >> $GITHUB_ENV
+          echo "FORKED_REPO_OWNER=rancher" >> $GITHUB_ENV
+          echo "FORKED_REPO_NAME=ingress-nginx" >> $GITHUB_ENV
+          echo "ISSUE_REPO_OWNER=rancher" >> $GITHUB_ENV
+          echo "ISSUE_REPO_NAME=rancher" >> $GITHUB_ENV
+
+          # Fetch the latest release from the upstream repository
+          latest_upstream_release=$(curl -s https://api.github.com/repos/$UPSTREAM_REPO_OWNER/$UPSTREAM_REPO_NAME/releases | jq -r '[.[] | select(.tag_name | startswith("controller"))] | .[0].tag_name')
+
+          # Fetch the latest release from the forked repository
+          latest_forked_release=$(curl -s https://api.github.com/repos/$FORKED_REPO_OWNER/$FORKED_REPO_NAME/releases | jq -r '[.[] | select(.tag_name)] | .[0].tag_name')
+
+          # Fetch the only version from the release tag
+          latest_upstream_version=$(echo $latest_upstream_release | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          latest_forked_version=$(echo $latest_forked_release | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+ 
+          echo "latest_upstream_version=$latest_upstream_version" >> $GITHUB_ENV
+          echo "latest_forked_version=$latest_forked_version" >> $GITHUB_ENV
+
+          if [ "$(printf '%s\n' "$latest_forked_version" "$latest_upstream_version" | sort -V | head -n1)" != "$latest_upstream_version" ]; then
+            echo "new_release=true" >> $GITHUB_ENV
+          else
+            echo "new_release=false" >> $GITHUB_ENV
+          fi
+
+      - name: Create issue
+        if: env.new_release == 'true'
+        run: |
+          issue_title="Bump ingress-nginx versions ${{ env.latest_upstream_release }}"
+          issue_body=$(cat .github/ISSUE_TEMPLATE/release-note.md | sed "s/{{latest_upstream_release}}/${{ env.latest_upstream_release }}/g")
+
+          gh issue create \
+            --title "$issue_title" \
+            --body "$issue_body" \
+            # --repo "rancher/rancher"
+            --repo "krunalhinguu/ingress-nginx"
+
+    
+      - name: Create new branch and cherry-pick commits
+        if: env.new_release == 'true'
+        run: |
+          branch_name="bump-${{ env.latest_upstream_release }}"
+          
+          # Create a new branch
+          git checkout -b $branch_name
+
+          # Cherry-pick specific commits (replace <commit-hash> with actual commit hashes)
+          git cherry-pick 59c4a6f
+          git cherry-pick 7f3d589
+
+          # Push the new branch to the repository
+          git push origin $branch_name

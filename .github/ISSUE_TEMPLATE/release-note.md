@@ -1,0 +1,1 @@
+As per this issue, the ask is to bump versions of ingress-nginx on all actively supported K8s versions ({{latest_upstream_release}} (https://github.com/kubernetes/ingress-nginx/releases/tag/{{latest_upstream_release}}). Note ingress-nginx {{latest_upstream_release}} officially supports  https://github.com/kubernetes/ingress-nginx#supported-versions-table
