@@ -4,9 +4,8 @@ on:
   push:
     branches:
       - automation-workflow # Runs on every commit to the automation-workflow branch
-  schedule:
+  # schedule:
     # - cron: '0 0 * * *' # Runs daily at midnight
-    - cron: '* * * * *' # Runs daily at midnight
   workflow_dispatch:
 
 jobs:
