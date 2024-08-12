@@ -68,6 +68,8 @@ jobs:
 
       - name: Create issue
         if: env.new_release == 'true'
+        env:  
+           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           issue_title="Bump ingress-nginx versions ${{ env.latest_upstream_release }}"
           issue_body=$(cat .github/ISSUE_TEMPLATE/release-note.md | sed "s/{{latest_upstream_release}}/${{ env.latest_upstream_release }}/g")
