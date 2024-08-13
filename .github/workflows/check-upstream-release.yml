@@ -91,6 +91,9 @@ jobs:
           branch_name="bump-${{ env.latest_upstream_release }}"
           upstream_repo_url="https://github.com/kubernetes/ingress-nginx.git"
 
+          # Configure Git to use GITHUB_TOKEN for authentication
+          git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
+
           git fetch origin
           
           # Clone the upstream repository
