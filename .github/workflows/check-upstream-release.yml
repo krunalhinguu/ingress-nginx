@@ -6,6 +6,10 @@ on:
       - automation-workflow # Runs on every commit to the automation-workflow branch
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
 jobs:
   check-release:
     runs-on: ubuntu-latest
@@ -81,8 +85,8 @@ jobs:
       - name: Create new branch, cherry-pick commits, and raise PR
         if: env.new_release == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
-          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        id: branch
         run: |
 
           # Configure Git user
