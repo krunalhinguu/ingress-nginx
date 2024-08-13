@@ -85,7 +85,6 @@ jobs:
         if: env.new_release == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           branch_name="bump-${{ env.latest_upstream_release }}"
           upstream_repo_url="https://github.com/kubernetes/ingress-nginx.git"
