@@ -83,6 +83,7 @@ jobs:
           branch_name="bump-${{ env.latest_upstream_release }}"
           
           # Create a new branch
+          git fetch origin
           git checkout -b $branch_name
 
           # Cherry-pick specific commits (replace <commit-hash> with actual commit hashes)
