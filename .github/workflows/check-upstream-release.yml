@@ -100,7 +100,7 @@ jobs:
           git checkout -b $branch_name
 
           # Cherry-pick the specific commit(s)
-          git cherry-pick 7eb156d3cd3e0c6cd6e0bf5bfd4756f81d7329f6
+          git cherry-pick 8d5dcadc676b7ef3ac08703c241afdb3fd7b0480
 
           # Push the new branch to the forked repository
           git remote set-url origin https://github.com/krunalhinguu/ingress-nginx.git
