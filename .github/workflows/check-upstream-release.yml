@@ -71,23 +71,42 @@ jobs:
           issue_title="Bump ingress-nginx versions ${{ env.latest_upstream_release }}"
           issue_body=$(cat .github/ISSUE_TEMPLATE/release-note.md | sed "s/{{latest_upstream_release}}/${{ env.latest_upstream_release }}/g")
 
-          gh issue create \
-            --title "$issue_title" \
-            --body "$issue_body" \
-            --repo "krunalhinguu/ingress-nginx"
+          # Create the issue and capture the URL
+          issue_url=$(gh issue create --title "Bump ingress-nginx versions ${{ env.latest_upstream_release }}" \
+          --body "$(cat .github/ISSUE_TEMPLATE/release-note.md | sed "s/{{latest_upstream_release}}/${{ env.latest_upstream_release }}/g")" \
+          --repo "krunalhinguu/ingress-nginx" \
+          --json url | jq -r .url)
 
-    
-      - name: Create new branch and cherry-pick commits
+          # Store the issue URL as a GitHub environment variable
+          echo "issue_url=$issue_url" >> $GITHUB_ENV
+
+
+      - name: Create new branch, cherry-pick commits, and raise PR
         if: env.new_release == 'true'
         run: |
           branch_name="bump-${{ env.latest_upstream_release }}"
-          
-          # Create a new branch
+          upstream_repo_url="https://github.com/kubernetes/ingress-nginx.git"
+
           git fetch origin
+          
+          # Clone the upstream repository
+          git clone $upstream_repo_url
+          cd ingress-nginx
+
+          # Checkout the specific release tag
+          git checkout $latest_upstream_release
+
+          # Create a new branch for the changes
           git checkout -b $branch_name
 
-          # Cherry-pick specific commits (replace <commit-hash> with actual commit hashes)
+          # Cherry-pick the specific commit(s)
           git cherry-pick 7eb156d3cd3e0c6cd6e0bf5bfd4756f81d7329f6
 
-          # Push the new branch to the repository
+          # Push the new branch to the forked repository
+          git remote set-url origin https://github.com/krunalhinguu/ingress-nginx.git
           git push origin $branch_name
+
+          # Create a PR from the new branch to main
+          gh pr create --base main --head $branch_name --title "Bump to $latest_upstream_release --body "Cherry-pick changes from $latest_upstream_release\n\nRelated Issue: $issue_url"        
+          env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
