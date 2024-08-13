@@ -92,7 +92,7 @@ jobs:
           upstream_repo_url="https://github.com/kubernetes/ingress-nginx.git"
 
           # Configure Git to use GITHUB_TOKEN for authentication
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/rancher/ingress-nginx.git
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/krunalhinguu/ingress-nginx.git
 
           git fetch origin
           
