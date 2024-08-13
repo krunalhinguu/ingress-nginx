@@ -97,7 +97,7 @@ jobs:
           git checkout $latest_upstream_release
 
           # Create a new branch for the changes
-          git checkout -b $branch_name
+          git switch -c $branch_name
 
           # Cherry-pick the specific commit(s)
           git cherry-pick 8d5dcadc676b7ef3ac08703c241afdb3fd7b0480
