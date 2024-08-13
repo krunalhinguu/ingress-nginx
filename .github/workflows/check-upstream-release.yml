@@ -97,7 +97,7 @@ jobs:
           git checkout $latest_upstream_release
 
           # Create a new branch for the changes
-          git switch -c $branch_name
+          git checkout -b $branch_name
 
           # Configure Git user
           git config --global user.email "krunal.hingu222@gmail.com"
