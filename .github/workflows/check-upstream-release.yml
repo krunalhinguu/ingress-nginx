@@ -86,8 +86,7 @@ jobs:
           git checkout -b $branch_name
 
           # Cherry-pick specific commits (replace <commit-hash> with actual commit hashes)
-          git cherry-pick 59c4a6f
-          git cherry-pick 7f3d589
+          git cherry-pick 7eb156d3cd3e0c6cd6e0bf5bfd4756f81d7329f6
 
           # Push the new branch to the repository
           git push origin $branch_name
