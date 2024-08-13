@@ -110,7 +110,7 @@ jobs:
           git branch -vv
 
           # Push the new branch to the forked repository
-          git push origin $branch_name
+          git branch --set-upstream-to=origin/bump-controller-v1.11.1 bump-controller-v1.11.1
 
           # Authenticate GitHub CLI
           echo "$GH_TOKEN" | gh auth login --with-token
