@@ -99,9 +99,6 @@ jobs:
           # Create a new branch for the changes
           git switch -c $branch_name
 
-          # Cherry-pick the specific commit(s)
-          git cherry-pick 8d5dcadc676b7ef3ac08703c241afdb3fd7b0480
-
           # Push the new branch to the forked repository
           git remote set-url origin https://github.com/krunalhinguu/ingress-nginx.git
           git push origin $branch_name
