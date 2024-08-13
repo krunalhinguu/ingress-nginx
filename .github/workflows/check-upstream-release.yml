@@ -104,7 +104,7 @@ jobs:
           git config --global user.name "Krunal Hingu"
 
           # Push the new branch to the forked repository
-          git push origin $branch_name
+          git push --set-upstream origin $branch_name
 
           # Authenticate GitHub CLI
           echo "$GH_TOKEN" | gh auth login --with-token
