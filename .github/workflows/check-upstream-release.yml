@@ -90,6 +90,7 @@ jobs:
           # Configure Git user
           git config --global user.email "krunal.hingu222@gmail.com"
           git config --global user.name "Krunal Hingu"
+          git config --bool core.bare true
 
           branch_name="bump-${{ env.latest_upstream_release }}"
           upstream_repo_url="https://github.com/kubernetes/ingress-nginx.git"
