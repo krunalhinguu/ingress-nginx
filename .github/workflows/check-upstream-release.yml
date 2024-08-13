@@ -110,7 +110,7 @@ jobs:
           git show-ref
 
           # Push the new branch to the forked repository
-          git push origin $branch_name
+          git push origin --set-upstream $branch_name
 
           # Authenticate GitHub CLI
           echo "$GH_TOKEN" | gh auth login --with-token
