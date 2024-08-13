@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.PAT_TOKEN }} # Ensure PAT_TOKEN is set in GitHub Secrets
+          token: ${{ secrets.GH_TOKEN }} # Ensure PAT_TOKEN is set in GitHub Secrets
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
