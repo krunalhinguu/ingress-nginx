@@ -84,6 +84,7 @@ jobs:
         if: env.new_release == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
 
           # Configure Git user
