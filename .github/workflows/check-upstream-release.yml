@@ -107,7 +107,7 @@ jobs:
           git checkout $latest_upstream_version
           git checkout -B $branch_name
 
-          git show-ref
+          git branch -vv
 
           # Push the new branch to the forked repository
           git push origin $branch_name
