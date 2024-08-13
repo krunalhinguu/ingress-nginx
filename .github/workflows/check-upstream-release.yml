@@ -83,6 +83,8 @@ jobs:
 
       - name: Create new branch, cherry-pick commits, and raise PR
         if: env.new_release == 'true'
+        env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           branch_name="bump-${{ env.latest_upstream_release }}"
           upstream_repo_url="https://github.com/kubernetes/ingress-nginx.git"
@@ -105,5 +107,4 @@ jobs:
 
           # Create a PR from the new branch to main
           gh pr create --base main --head $branch_name --title "Bump to $latest_upstream_release --body "Cherry-pick changes from $latest_upstream_release\n\nRelated Issue: $issue_url"        
-          env:
-            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
