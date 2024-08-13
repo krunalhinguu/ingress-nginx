@@ -81,7 +81,6 @@ jobs:
           # Store the issue URL as a GitHub environment variable
           echo "issue_url=$issue_url" >> $GITHUB_ENV
 
-
       - name: Create new branch, cherry-pick commits, and raise PR
         if: env.new_release == 'true'
         env:
@@ -91,8 +90,6 @@ jobs:
           branch_name="bump-${{ env.latest_upstream_release }}"
           upstream_repo_url="https://github.com/kubernetes/ingress-nginx.git"
 
-          git fetch origin
-          
           # Clone the upstream repository
           git clone $upstream_repo_url
           cd ingress-nginx
@@ -103,15 +100,19 @@ jobs:
           # Create a new branch for the changes
           git switch -c $branch_name
 
-          git config --global user.email krunal.hingu222@gmail.com"
+          # Configure Git user
+          git config --global user.email "krunal.hingu222@gmail.com"
           git config --global user.name "Krunal Hingu"
 
+          # Set up the remote to your forked repository
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/krunalhinguu/ingress-nginx.git
+
           # Push the new branch to the forked repository
-          git remote set-url origin https://github.com/krunalhinguu/ingress-nginx.git
           git push origin $branch_name
 
+          # Authenticate GitHub CLI
           echo "$GH_TOKEN" | gh auth login --with-token
 
           # Create a PR from the new branch to main
-          gh pr create --base main --head $branch_name --title "Bump to $latest_upstream_release --body "Cherry-pick changes from $latest_upstream_release\n\nRelated Issue: $issue_url"        
-          
+          gh pr create --base main --head $branch_name --title "Bump to ${{ env.latest_upstream_release }}" --body "Cherry-pick changes from ${{ env.latest_upstream_release }}\n\nRelated Issue: $issue_url"
+
