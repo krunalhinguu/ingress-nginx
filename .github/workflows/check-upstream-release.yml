@@ -83,8 +83,7 @@ jobs:
       - name: Create new branch, cherry-pick commits, and raise PR
         if: env.new_release == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
 
           # Configure Git user
