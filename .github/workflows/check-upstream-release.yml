@@ -60,19 +60,20 @@ jobs:
             echo "new_release=false" >> $GITHUB_ENV
           fi
 
+          echo $new_release 
+
       - name: Create issue
         if: env.new_release == 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:  
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           issue_title="Bump ingress-nginx versions ${{ env.latest_upstream_release }}"
           issue_body=$(cat .github/ISSUE_TEMPLATE/release-note.md | sed "s/{{latest_upstream_release}}/${{ env.latest_upstream_release }}/g")
 
           # Create the issue and capture the URL
-          issue_url=$(gh issue create --title "$issue_title" \
-          --body "$issue_body" \
-          --repo "rancher/ingress-nginx" \
-          --json url -q .url)
+          gh issue create --title "Bump ingress-nginx versions ${{ env.latest_upstream_release }}" \
+          --body "$(cat .github/ISSUE_TEMPLATE/release-note.md | sed "s/{{latest_upstream_release}}/${{ env.latest_upstream_release }}/g")" \
+          --repo "krunalhinguu/ingress-nginx" 
 
           # Store the issue URL as a GitHub environment variable
           echo "issue_url=$issue_url" >> $GITHUB_ENV
@@ -81,7 +82,9 @@ jobs:
         if: env.new_release == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
         run: |
+
           # Configure Git user
           git config --global user.email "krunal.hingu222@gmail.com"
           git config --global user.name "Krunal Hingu"
@@ -99,7 +102,8 @@ jobs:
           git remote -v
 
           # Create a new branch for the changes
-          git checkout -b $branch_name
+          git checkout $latest_upstream_version
+          git checkout -B $branch_name
 
           git branch -vv
 
@@ -107,7 +111,9 @@ jobs:
           git push -u origin $branch_name
 
           # Authenticate GitHub CLI
-          echo "$GITHUB_TOKEN" | gh auth login --with-token
+          echo "$GH_TOKEN" | gh auth login --with-token
 
           # Create a PR from the new branch to main
-          gh pr create --base main --head $branch_name --title "Bump to ${{ env.latest_upstream_release }}" --body "Cherry-pick changes from ${{ env.latest_upstream_release }}"
+          gh pr create --base main --head $branch_name --title "Bump to ${{ env.latest_upstream_release }}" --body "Cherry-pick changes from 
+          ${{ env.latest_upstream_release }}"
+
