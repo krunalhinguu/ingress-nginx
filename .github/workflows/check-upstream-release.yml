@@ -91,9 +91,6 @@ jobs:
           branch_name="bump-${{ env.latest_upstream_release }}"
           upstream_repo_url="https://github.com/kubernetes/ingress-nginx.git"
 
-          # Configure Git to use GITHUB_TOKEN for authentication
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/krunalhinguu/ingress-nginx.git
-
           git fetch origin
           
           # Clone the upstream repository
@@ -105,6 +102,9 @@ jobs:
 
           # Create a new branch for the changes
           git switch -c $branch_name
+
+          git config --global user.email krunal.hingu222@gmail.com"
+          git config --global user.name "Krunal Hingu"
 
           # Push the new branch to the forked repository
           git remote set-url origin https://github.com/krunalhinguu/ingress-nginx.git
