@@ -95,8 +95,8 @@ jobs:
           upstream_repo_url="https://github.com/kubernetes/ingress-nginx.git"
 
           # Clone the upstream repository
-          git clone $upstream_repo_url
-          cd ingress-nginx
+          git remote add kubernetes $upstream_repo_url
+          git fetch kubernetes
 
           # Checkout the specific release tag
           git checkout $latest_upstream_release
@@ -104,6 +104,7 @@ jobs:
           git remote -v
 
           # Create a new branch for the changes
+          git checkout $latest_upstream_version
           git checkout -b $branch_name
 
           # Push the new branch to the forked repository
