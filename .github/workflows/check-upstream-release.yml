@@ -94,20 +94,13 @@ jobs:
           curl -H "Authorization: token $GH_TOKEN" https://api.github.com/user
 
           branch_name="bump-${{ env.latest_upstream_release }}"
-          upstream_repo_url="https://github.com/kubernetes/ingress-nginx.git"
 
-          # Clone the upstream repository
-          git remote add kubernetes $upstream_repo_url
-          git fetch kubernetes
-
-          # Checkout the specific release tag
-          git checkout $latest_upstream_release
 
           git remote -v
 
           # Create a new branch for the changes
-          git checkout $latest_upstream_version
-          git checkout -B $branch_name
+          git checkout origin krunalhingu-nginx-v1.9.5
+          git checkout -b $branch_name
 
           git branch -vv
 
