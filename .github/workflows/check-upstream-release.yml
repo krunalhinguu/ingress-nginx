@@ -81,7 +81,6 @@ jobs:
       - name: Create new branch, cherry-pick commits, and raise PR
         if: env.new_release == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
           GH_TOKEN: ${{ secrets.MY_PERSONAL_ACCESS_TOKEN }}
         run: |
 
@@ -107,9 +106,7 @@ jobs:
 
           git branch -vv
 
-          # Push the new branch to the forked repository
-          git push -u origin $branch_name
-
+          git push https://krunalhinguuu:${GH_TOKEN}@github.com/krunalhinguu/ingress-nginx.git $branch_name
           # Authenticate GitHub CLI
           echo "$GH_TOKEN" | gh auth login --with-token
 
