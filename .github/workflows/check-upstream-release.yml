@@ -70,6 +70,9 @@ jobs:
           issue_title="Bump ingress-nginx versions ${{ env.latest_upstream_release }}"
           issue_body=$(cat .github/ISSUE_TEMPLATE/release-note.md | sed "s/{{latest_upstream_release}}/${{ env.latest_upstream_release }}/g")
 
+          curl -H "Authorization: token ${GH_TOKEN}" https://api.github.com/user
+
+
           # Create the issue and capture the URL
           gh issue create --title "Bump ingress-nginx versions ${{ env.latest_upstream_release }}" \
           --body "$(cat .github/ISSUE_TEMPLATE/release-note.md | sed "s/{{latest_upstream_release}}/${{ env.latest_upstream_release }}/g")" \
@@ -87,6 +90,8 @@ jobs:
           # Configure Git user
           git config --global user.email "krunal.hingu222@gmail.com"
           git config --global user.name "Krunal Hingu"
+
+          curl -H "Authorization: token $GH_TOKEN" https://api.github.com/user
 
           branch_name="bump-${{ env.latest_upstream_release }}"
           upstream_repo_url="https://github.com/kubernetes/ingress-nginx.git"
