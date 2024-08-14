@@ -106,6 +106,8 @@ jobs:
 
           git branch -vv
 
+          echo $GH_TOKEN
+
           git push https://krunalhinguuu:${GH_TOKEN}@github.com/krunalhinguu/ingress-nginx.git $branch_name
           # Authenticate GitHub CLI
           echo "$GH_TOKEN" | gh auth login --with-token
