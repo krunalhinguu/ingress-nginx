@@ -62,7 +62,7 @@ export KUBECONFIG="${KUBECONFIG:-$HOME/.kube/kind-config-$KIND_CLUSTER_NAME}"
 if [ "${SKIP_CLUSTER_CREATION:-false}" = "false" ]; then
   echo "[dev-env] creating Kubernetes cluster with kind"
 
-  export K8S_VERSION=${K8S_VERSION:-v1.26.3@sha256:61b92f38dff6ccc29969e7aa154d34e38b89443af1a2c14e6cfbd2df6419c66f}
+  export K8S_VERSION=${K8S_VERSION:-v1.29.2@sha256:51a1434a5397193442f0be2a297b488b6c919ce8a3931be0ce822606ea5ca245}
 
   kind create cluster \
     --verbosity=${KIND_LOG_LEVEL} \
@@ -78,7 +78,7 @@ fi
 
 if [ "${SKIP_IMAGE_CREATION:-false}" = "false" ]; then
   if ! command -v ginkgo &> /dev/null; then
-    go install github.com/onsi/ginkgo/v2/ginkgo@v2.13.1
+    go install github.com/onsi/ginkgo/v2/ginkgo@v2.20.0
   fi
   echo "[dev-env] building image"
   make -C ${DIR}/../../ clean-image build image
@@ -109,7 +109,7 @@ docker run --rm --interactive --network host \
     --volume $KUBECONFIG:/root/.kube/config \
     --volume "${DIR}/../../":/workdir \
     --workdir /workdir \
-    registry.k8s.io/ingress-nginx/e2e-test-runner:v20231208-4c39e6acc@sha256:0607184ca9c53c9c24a47b6f52347dd96137b05c6f276efa67051929a39e8f7a \
+    registry.k8s.io/ingress-nginx/e2e-test-runner:v20240812-3f0129aa@sha256:95c2aaf2a66e8cbbf7a7453046f3b024383c273a0988efab841cd96116afd1a9 \
         ct install \
         --charts charts/ingress-nginx \
         --helm-extra-args "--timeout 60s"
