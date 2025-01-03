@@ -47,7 +47,7 @@ jobs:
 
   build-and-validate:
     needs: create-branches
-    runs-on: runs-on,runner=4cpu-linux-x64,run-id=${{ github.run_id }}
+    runs-on: ubuntu-latest
     container:
       image: rancher/dapper:v0.6.0
     permissions:
