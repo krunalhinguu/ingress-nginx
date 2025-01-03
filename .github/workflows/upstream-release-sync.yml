@@ -129,5 +129,5 @@ jobs:
               echo "[INFO] Successfully pushed tag $TAG: https://github.com/rancher/ingress-nginx/releases/tag/$TAG"
           fi
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_BRANCH: ${{ matrix.branches }}
