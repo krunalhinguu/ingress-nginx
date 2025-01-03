@@ -34,6 +34,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
 	"k8s.io/ingress-nginx/test/e2e/framework"
@@ -107,8 +108,9 @@ var _ = framework.DescribeSetting("OCSP", func() {
 		err = framework.WaitForEndpoints(f.KubeClientSet, framework.DefaultTimeout, "ocspserve", f.Namespace, 1)
 		assert.Nil(ginkgo.GinkgoT(), err, "waiting for endpoints to become ready")
 
-		f.WaitForNginxConfiguration(func(cfg string) bool {
-			return strings.Contains(cfg, "certificate.is_ocsp_stapling_enabled = true")
+		f.WaitForLuaConfiguration(func(jsonCfg map[string]interface{}) bool {
+			val, ok, err := unstructured.NestedBool(jsonCfg, "enable_ocsp")
+			return err == nil && ok && val
 		})
 
 		f.WaitForNginxServer(host,
@@ -295,7 +297,7 @@ func ocspserveDeployment(namespace string) (*appsv1.Deployment, *corev1.Service)
 						Containers: []corev1.Container{
 							{
 								Name:  name,
-								Image: "registry.k8s.io/ingress-nginx/cfssl:v1.0.0@sha256:fffd36e2f1c8fd485ec6fd24c6d55f0817b54352274293d2a247b8a0d924c5b0",
+								Image: "registry.k8s.io/ingress-nginx/cfssl:v1.1.0@sha256:31a195d7c3dc801575ca46919ff2b3f01afce54a744ab22ee83469f92a6e0965",
 								Command: []string{
 									"/bin/bash",
 									"-c",

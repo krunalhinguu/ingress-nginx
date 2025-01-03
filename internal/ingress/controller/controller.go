@@ -105,11 +105,14 @@ type Configuration struct {
 
 	EnableProfiling bool
 
-	EnableMetrics        bool
-	MetricsPerHost       bool
-	MetricsBuckets       *collectors.HistogramBuckets
-	ReportStatusClasses  bool
-	ExcludeSocketMetrics []string
+	EnableMetrics           bool
+	MetricsPerHost          bool
+	MetricsPerUndefinedHost bool
+	MetricsBuckets          *collectors.HistogramBuckets
+	MetricsBucketFactor     float64
+	MetricsMaxBuckets       uint32
+	ReportStatusClasses     bool
+	ExcludeSocketMetrics    []string
 
 	FakeCertificate *ingress.SSLCert
 
@@ -376,10 +379,6 @@ func (n *NGINXController) CheckIngress(ing *networking.Ingress) error {
 
 		if !cfg.AllowSnippetAnnotations && strings.HasSuffix(key, "-snippet") {
 			return fmt.Errorf("%s annotation cannot be used. Snippet directives are disabled by the Ingress administrator", key)
-		}
-
-		if cfg.GlobalRateLimitMemcachedHost == "" && strings.HasPrefix(key, fmt.Sprintf("%s/%s", parser.AnnotationsPrefix, "global-rate-limit")) {
-			return fmt.Errorf("'global-rate-limit*' annotations require 'global-rate-limit-memcached-host' settings configured in the global configmap")
 		}
 	}
 
@@ -1256,6 +1255,7 @@ func (n *NGINXController) createServers(data []*ingress.Ingress,
 		ReadTimeout:          bdef.ProxyReadTimeout,
 		BuffersNumber:        bdef.ProxyBuffersNumber,
 		BufferSize:           bdef.ProxyBufferSize,
+		BusyBuffersSize:      bdef.ProxyBusyBuffersSize,
 		CookieDomain:         bdef.ProxyCookieDomain,
 		CookiePath:           bdef.ProxyCookiePath,
 		NextUpstream:         bdef.ProxyNextUpstream,
@@ -1514,7 +1514,6 @@ func locationApplyAnnotations(loc *ingress.Location, anns *annotations.Ingress) 
 	loc.Proxy = anns.Proxy
 	loc.ProxySSL = anns.ProxySSL
 	loc.RateLimit = anns.RateLimit
-	loc.GlobalRateLimit = anns.GlobalRateLimit
 	loc.Redirect = anns.Redirect
 	loc.Rewrite = anns.Rewrite
 	loc.UpstreamVhost = anns.UpstreamVhost
