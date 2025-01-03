@@ -37,6 +37,11 @@ for tag in $NEW_TAGS; do
     fi
     echo "[INFO] Checkout to a local branch nginx-${tag}-fix from the upstream tag controller-v$tag."
 
+    # Step 1: Delete .github/workflows and commit
+    echo "[INFO] Deleting .github/workflows files."
+    rm -rf .github/workflows/*
+    git add .github/workflows
+    git commit -m "Delete .github/workflows files"
 
     # Extract major and minor version from the tag
     major_minor=$(echo "${tag}" | cut -d '.' -f 1,2)
