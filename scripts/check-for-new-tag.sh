@@ -70,8 +70,8 @@ else
     done
 fi
 
-# echo "NEW_TAGS=${new_tags[@]}" >> $GITHUB_ENV
-echo "NEW_TAGS=1.12.0" >> $GITHUB_ENV
+echo "NEW_TAGS=${new_tags[@]}" >> $GITHUB_ENV
+# echo "NEW_TAGS=1.12.0" >> $GITHUB_ENV
 
 # Clean up temporary files
 rm -f "$rancher_tags_file" "$upstream_tags_file"
